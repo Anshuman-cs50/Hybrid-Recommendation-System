@@ -1,0 +1,20 @@
+{% extends "template.html" %}
+
+{% block title %}{{ movie_title }} - Preview{% endblock %}
+
+{% block content %}
+    <div class="movie-banner" style="background: url('{{ movie_poster }}') no-repeat center center/cover;">
+        <div class="movie-info">
+            <h2>{{ movie_title }}</h2>
+            <p><strong>Genre:</strong> {{ movie_genre }}</p>
+            <p><strong>Rating:</strong> {{ movie_rating }}/10</p>
+            <p><strong>Release Year:</strong> {{ movie_year }}</p>
+            <p>{{ movie_description }}</p>
+            <a href="{{ movie_trailer }}" class="btn-watch">Watch Trailer</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movie.css') }}">
+{% endblock %}
