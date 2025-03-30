@@ -1,5 +1,6 @@
 import os
 import requests
+import pymysql
 from imdb import IMDb
 
 # Initialize IMDb object
@@ -9,8 +10,24 @@ ia = IMDb()
 SAVE_DIR = "movie_posters"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
-# List of movie titles (Replace this with your database values)
-movie_titles = ["Inception", "The Matrix", "Avatar"]
+def get_db_connection():
+    return pymysql.connect(
+        host = 'localhost',
+        user = "root",
+        password = "Anshuman@0812",
+        database = "movies_db"
+    )
+
+conn = get_db_connection()
+cursor = conn.cursor()
+
+# extract all titles from the database
+cursor.execute("SELECT title FROM movies")
+movie_titles = cursor.fetchall()
+
+movie_titles = [title[0] for title in movie_titles]
+
+# movie_titles = ["Avatar"]
 
 def download_poster(movie_title):
     """Fetch and download movie poster from IMDb"""
@@ -34,6 +51,14 @@ def download_poster(movie_title):
             with open(file_name, "wb") as img_file:
                 img_file.write(response.content)
             print(f"✅ Downloaded: {movie_title}")
+
+            # Insert poster details into the database
+            cursor.execute(
+                "UPDATE movies SET poster_path = %s WHERE title = %s",
+                (f"movie_posters/{movie_title}.jpg", movie_title)
+            )
+            conn.commit()
+
         else:
             print(f"❌ Failed to download: {movie_title}")
 
