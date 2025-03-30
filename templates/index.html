@@ -1,56 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTT Recommendation System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #141414;
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: black;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .container {
-            padding: 20px;
-        }
-        .movies {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .movie {
-            width: 150px;
-            height: 220px;
-            background-color: #222;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 10px;
-        }
-        h2 {
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="navbar">
-        <div class="logo">OTT Recommender</div>
-    </div>
-    
+{% extends "template.html" %}
+
+{% block title %}Home - OTT Recommender{% endblock %}
+
+{% block content %}
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             {% for image in carousel_images %}
@@ -61,7 +13,7 @@
             {% for image in carousel_images %}
                 <div class="carousel-item {% if loop.first %}active{% endif %}">
                     <img src="{{ image }}" class="d-block w-100" alt="Slide {{ loop.index }}">
-                </div>
+                </div> 
             {% endfor %}
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -74,48 +26,43 @@
         </button>
     </div>
     
-    <div class="container">
-        <h2>Recommended for you</h2>
-        <div class="movies" id="user-recommendations">
-            {% for movie in user_recommendations %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        </div>
-        
-        <h2>Most viewed</h2>
-        <div class="movies" id="top10-recommendations">
-            {% for movie in most_viewed %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        </div>
-        
-        <h2>Trending</h2>
-        <div class="movies" id="most-popular">
-            {% for movie in trending %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        </div>
-
-        <h2>Newly arrived</h2>
-        <div class="movies" id="most-popular">
-            {% for movie in newly_arr %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        </div>
-        
-        <h2>Genre-Based Recommendations</h2>
-        <div class="movies" id="genre-recommendations">
-            {% for genre, movies in genre_recommendations.items() %}
-                <h3>{{ genre }}</h3>
-                <div class="movies">
-                    {% for movie in movies %}
-                        <div class="movie">{{ movie }}</div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
+    <h2>Recommended for you</h2>
+    <div class="movies" id="user-recommendations">
+        {% for movie in user_recommendations %}
+            <div class="movie">{{ movie }}</div>
+        {% endfor %}
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <h2>Most viewed</h2>
+    <div class="movies" id="top10-recommendations">
+        {% for movie in most_viewed %}
+            <div class="movie">{{ movie }}</div>
+        {% endfor %}
+    </div>
+    
+    <h2>Trending</h2>
+    <div class="movies" id="most-popular">
+        {% for movie in trending %}
+            <div class="movie">{{ movie }}</div>
+        {% endfor %}
+    </div>
+
+    <h2>Newly arrived</h2>
+    <div class="movies" id="most-popular">
+        {% for movie in newly_arr %}
+            <div class="movie">{{ movie }}</div>
+        {% endfor %}
+    </div>
+    
+    <h2>Genre-Based Recommendations</h2>
+    <div class="movies" id="genre-recommendations">
+        {% for genre, movies in genre_recommendations.items() %}
+            <h3>{{ genre }}</h3>
+            <div class="movies">
+                {% for movie in movies %}
+                    <div class="movie">{{ movie }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
