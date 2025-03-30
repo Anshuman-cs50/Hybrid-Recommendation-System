@@ -13,7 +13,7 @@
             {% for image in carousel_images %}
                 <div class="carousel-item {% if loop.first %}active{% endif %}">
                     <img src="{{ image }}" class="d-block w-100" alt="Slide {{ loop.index }}">
-                </div>
+                </div> 
             {% endfor %}
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
