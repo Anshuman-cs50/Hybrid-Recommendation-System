@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import pymysql
 
 app = Flask(__name__)
@@ -24,7 +24,7 @@ def index():
 
 
     # get some genre-based recommendations
-    return "Welcome to the Movie Recommendation System!"
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,47 @@
+import os
+import requests
+from imdb import IMDb
+
+# Initialize IMDb object
+ia = IMDb()
+
+# Folder to save posters
+SAVE_DIR = "movie_posters"
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+# List of movie titles (Replace this with your database values)
+movie_titles = ["Inception", "The Matrix", "Avatar"]
+
+def download_poster(movie_title):
+    """Fetch and download movie poster from IMDb"""
+    try:
+        movies = ia.search_movie(movie_title)
+        if not movies:
+            print(f"❌ Movie not found: {movie_title}")
+            return
+
+        movie = ia.get_movie(movies[0].movieID)
+        poster_url = movie.get("full-size cover url")  # Get full-size poster URL
+
+        if not poster_url:
+            print(f"❌ No poster found for: {movie_title}")
+            return
+
+        # Download image
+        response = requests.get(poster_url)
+        if response.status_code == 200:
+            file_name = os.path.join(SAVE_DIR, f"{movie_title}.jpg")
+            with open(file_name, "wb") as img_file:
+                img_file.write(response.content)
+            print(f"✅ Downloaded: {movie_title}")
+        else:
+            print(f"❌ Failed to download: {movie_title}")
+
+    except Exception as e:
+        print(f"⚠️ Error processing {movie_title}: {e}")
+
+# Process all movies
+for title in movie_titles:
+    download_poster(title)
+
+print("\n🎉 All posters downloaded!")
