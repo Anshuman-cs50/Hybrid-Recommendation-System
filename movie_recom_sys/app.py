@@ -17,6 +17,13 @@ cursor = conn.cursor()
 
 @app.route('/')
 def index():
+    # get some movie recommendations based on user preferences
+
+    # get the most popular movies from the database
+    cursor.execute("SELECT * FROM movies ORDER BY popularity DESC LIMIT 10")
+
+
+    # get some genre-based recommendations
     return "Welcome to the Movie Recommendation System!"
 
 if __name__ == '__main__':
