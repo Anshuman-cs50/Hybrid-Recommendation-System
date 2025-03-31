@@ -35,3 +35,69 @@ body {
 .container {
     padding: 20px;
 }
+.movies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 0 0 auto;
+    margin-right: 10px;
+
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    width: 90%;
+    padding: 10px;
+}
+.movie {
+    width: 150px;
+    height: 220px;
+    background-color: #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    padding: 10px;
+    text-align: center;
+}
+.movie img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    opacity: 0.7;
+    border-radius: 8px;
+}
+.movie .info {
+    position: relative;
+    z-index: 2;
+}
+h2 {
+    margin-top: 20px;
+}
+.movies-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.scroll-left, .scroll-right {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    z-index: 10;
+}
+.scroll-left {
+    left: 0;
+}
+.scroll-right {
+    right: 0;
+}
