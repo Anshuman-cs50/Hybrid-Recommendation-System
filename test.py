@@ -17,39 +17,36 @@ def get_db_connection():
 
 conn = get_db_connection()
 cursor = conn.cursor()
+movies = {"genres": {}}  # Initialize with a dictionary for genres
+
+cursor.execute("""
+                SELECT name FROM genres
+               """)
+
+genres = [genre[0] for genre in cursor.fetchall()]
+
+for genre in genres:
+    cursor.execute("""
+                    SELECT m.*
+                    FROM movies m
+                    JOIN movie_genres mg ON m.movie_id = mg.movie_id
+                    JOIN genres g ON mg.genre_id = g.id
+                    WHERE g.name = %s
+                    ORDER BY m.popularity DESC 
+                    LIMIT 2
+                   """, (genre,))
+    
+    # Fetch the results
+    mg = cursor.fetchall()
+    
+    # Convert to a list of dictionaries (if cursor.description is available)
+    column_names = [desc[0] for desc in cursor.description]
+    mg = [dict(zip(column_names, row)) for row in mg]
+
+    movies["genres"][genre] = mg  # Assign list of dictionaries
+
+print(movies["genres"].keys())
 
 
-def fetch_most_viewed_movies():
-    cursor.execute("select movie_id, title, release_date, overview, poster_path from movies order by vote_count desc limit 2")
-    most_viewed = cursor.fetchall()
 
-    # Convert the result to a list of dictionaries
-    most_viewed = [
-        {
-            'movie_id': row[0],
-            'title': row[1],
-            'release_date': row[2],
-            'overview': row[3],
-            'poster_path': row[4]
-        } for row in most_viewed
-    ]
 
-    # helper function to fetch genres for a given movie_id
-    def fetch_genres(movie_id):
-        cursor.execute("""
-                        select name from genres 
-                        where id in (
-                            select genre_id from movie_genres where movie_id = %s
-                        )
-                    """, (movie_id, ))
-        genres = cursor.fetchall()
-        return [genre[0] for genre in genres] # return a flatten list of genres
-
-    # add attrifute genres to each movie in most_viewed
-    for movie in most_viewed:
-        movie["genres"] = fetch_genres(movie["movie_id"])
-
-    return most_viewed
-
-most_viewed = fetch_most_viewed_movies()
-print(most_viewed)

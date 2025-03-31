@@ -65,7 +65,7 @@ def get_movies():
                 LIMIT 10
             """)
             movies['action'] = cursor.fetchall()
-            
+        
         connection.close()
     except Exception as e:
         print(f"Database error: {e}")
