@@ -1,78 +1,35 @@
-{% extends "template.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Universe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <h1>Movie Universe</h1>
+        <p>Explore thousands of movies across various categories</p>
+    </header>
 
-{% block title %}Home - OTT Recommender{% endblock %}
+    <main>
+        <section class="category-section" id="latest">
+            <h2 class="category-title">Latest Releases</h2>
+            <div class="movies-container" id="latest-movies"></div>
+        </section>
 
-{% block content %}
-    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            {% for image in carousel_images %}
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index }}"></button>
-            {% endfor %}
-        </div>
-        <div class="carousel-inner">
-            {% for image in carousel_images %}
-                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                    <img src="{{ image }}" class="d-block w-100" alt="Slide {{ loop.index }}">
-                </div> 
-            {% endfor %}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-    
-    <h2>Recommended for you</h2>
-    <div class="movies" id="user-recommendations">
-        {% if user_recommendations %}
-            {% for movie in user_recommendations %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
-    
-    <h2>Most viewed</h2>
-    <div class="movies" id="top10-recommendations">
-        {% if most_viewed %}
-            {% for movie in most_viewed %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
-    
-    <h2>Trending</h2>
-    <div class="movies" id="most-popular">
-        {% if trending %}
-            {% for movie in trending %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
+        <section class="category-section" id="popular">
+            <h2 class="category-title">Most Popular</h2>
+            <div class="movies-container" id="popular-movies"></div>
+        </section>
 
-    <h2>Newly arrived</h2>
-    <div class="movies" id="most-popular">
-        {% if newly_arr %}
-            {% for movie in newly_arr %}
-                <div class="movie">{{ movie }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
-    
-    <h2>Genre-Based Recommendations</h2>
-    <div class="movies" id="genre-recommendations">
-        {% if genre_recommendations %}
-            {% for genre, movies in genre_recommendations.items() %}
-                <h3>{{ genre }}</h3>
-                <div class="movies">
-                    {% for movie in movies %}
-                        <div class="movie">{{ movie }}</div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-{% endblock %}
+        <section class="category-section" id="action">
+            <h2 class="category-title">Action Movies</h2>
+            <div class="movies-container" id="action-movies"></div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

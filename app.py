@@ -1,62 +1,76 @@
-from flask import Flask, jsonify, render_template, url_for
+from flask import Flask, render_template, jsonify
 import pymysql
 
 app = Flask(__name__)
 
-# Database connection
+# Database configuration (update with your credentials)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Anshuman@0812'
+app.config['MYSQL_DB'] = 'movies_db'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
 def get_db_connection():
     return pymysql.connect(
-        host='localhost',
-        user='root',
-        password='Anshuman@0812',
-        database='movies_db'
+        host=app.config['MYSQL_HOST'],
+        user=app.config['MYSQL_USER'],
+        password=app.config['MYSQL_PASSWORD'],
+        db=app.config['MYSQL_DB'],
+        cursorclass=pymysql.cursors.DictCursor
     )
-
-conn = get_db_connection()
-cursor = conn.cursor()
 
 @app.route('/')
 def index():
-    # get some movie recommendations based on user preferences
-    # pack the data into a dictionary such that {movie_id: , movie_name: , genre: [genre1, genre2, ...], release_date: , overview: , rating: , poster_path}
+    return render_template('index.html')
 
-    # most viewed movies
-    most_viewed = fetch_most_viewed_movies()
+@app.route('/api/movies')
+def get_movies():
+    # This is where you'll implement your database queries
+    # Sample structure - replace with actual database queries
+    movies = {
+        "latest": [],
+        "popular": [],
+        "action": []
+    }
+    
+    try:
+        # Example query structure (implement your actual queries here)
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            # Query for latest movies (you'll need to implement this)
+            cursor.execute("""
+                SELECT m.* 
+                FROM movies m
+                ORDER BY release_date DESC 
+                LIMIT 10
+            """)
+            movies['latest'] = cursor.fetchall()
 
-    # get the most popular movies from the database
-    cursor.execute("SELECT * FROM movies ORDER BY popularity DESC LIMIT 10")
+            # Query for popular movies
+            cursor.execute("""
+                SELECT m.* 
+                FROM movies m
+                ORDER BY popularity DESC 
+                LIMIT 10
+            """)
+            movies['popular'] = cursor.fetchall()
 
-    # get some genre-based recommendations
-    return render_template('index.html', most_viewed=most_viewed)
-
-def fetch_most_viewed_movies():
-    cursor.execute("select movie_id, title, release_date, overview, poster_path from movies order by vote_count desc limit 21")
-    most_viewed = cursor.fetchall()
-
-    # Convert the result to a list of dictionaries
-    most_viewed = [
-        {
-            'movie_id': row[0],
-            'poster_path': row[4]
-        } for row in most_viewed
-    ]
-
-    # helper function to fetch genres for a given movie_id
-    # def fetch_genres(movie_id):
-    #     cursor.execute("""
-    #                     select name from genres 
-    #                     where id in (
-    #                         select genre_id from movie_genres where movie_id = %s
-    #                     )
-    #                 """, (movie_id, ))
-    #     genres = cursor.fetchall()
-    #     return [genre[0] for genre in genres] # return a flatten list of genres
-
-    # # add attrifute genres to each movie in most_viewed
-    # for movie in most_viewed:
-    #     movie["genres"] = fetch_genres(movie["movie_id"])
-
-    return most_viewed
+            # Query for action movies
+            cursor.execute("""
+                SELECT m.* 
+                FROM movies m
+                JOIN movie_genres mg ON m.movie_id = mg.movie_id
+                JOIN genres g ON mg.genre_id = g.id
+                WHERE g.name = 'Action'
+                LIMIT 10
+            """)
+            movies['action'] = cursor.fetchall()
+            
+        connection.close()
+    except Exception as e:
+        print(f"Database error: {e}")
+    
+    return jsonify(movies)
 
 if __name__ == '__main__':
     app.run(debug=True)
