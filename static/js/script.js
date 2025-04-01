@@ -10,6 +10,7 @@ function createMovieCard(movie) {
                     <span class="rating">★ ${movie.rating.toFixed(1)}</span>
                 </div>
             </div>
+            <button class="save-movie-btn" data-movie-id="${movie.id}">💾 Save</button>
         </div>
     `;
 }
