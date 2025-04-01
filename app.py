@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 import pymysql
-from mysql.connector import Error
+from pymysql import Error
 
 # import import_ipynb
 # from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW, Recommend_Movies_with_TFIDF
@@ -48,6 +48,7 @@ def get_movies():
                 ORDER BY release_date DESC 
                 LIMIT 10
             """)
+            
             movies['latest'] = cursor.fetchall()
 
             # Query for popular movies
@@ -58,6 +59,8 @@ def get_movies():
                 LIMIT 10
             """)
             movies['popular'] = cursor.fetchall()
+
+            movies['Recommended'] = movies['popular']
 
             # Query for action movies
             cursor.execute("""

@@ -71,3 +71,34 @@ async function populateMovies() {
 document.addEventListener('DOMContentLoaded', () => {
     populateMovies();
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".save-movie-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let movieId = this.getAttribute("data-movie-id");
+            let userId = localStorage.getItem("user_id"); // Assuming user session handling
+
+            if (!userId) {
+                alert("Please log in to save movies.");
+                return;
+            }
+
+            fetch("/api/save_movie", {
+                method: "POST",
+                body: new URLSearchParams({ user_id: userId, movie_id: movieId }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    this.textContent = "✔ Saved"; // Change button text on success
+                    this.style.backgroundColor = "#2ed573"; // Green color for saved
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+});
