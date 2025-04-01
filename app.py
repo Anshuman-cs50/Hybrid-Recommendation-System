@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify
 import pymysql
 
+# import import_ipynb
+# from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW, Recommend_Movies_with_TFIDF
+
 app = Flask(__name__)
 
 # Database configuration (update with your credentials)
@@ -71,6 +74,8 @@ def get_movies():
         print(f"Database error: {e}")
     
     return jsonify(movies)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
