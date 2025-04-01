@@ -40,7 +40,8 @@ async function populateMovies() {
         const containers = {
             "latest": "#latest-movies",
             "popular": "#popular-movies",
-            "action": "#action-movies"
+            "action": "#action-movies",
+            "Recommended": "#Recommended-movies"
         };
 
         Object.entries(containers).forEach(([category, selector]) => {

@@ -87,7 +87,7 @@ def save_movie_route():
 
     if not user_id or not movie_id:
         return jsonify({"error": "User ID and Movie ID are required"}), 400
-    
+
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
