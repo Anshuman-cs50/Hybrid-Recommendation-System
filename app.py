@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify, request
 import pymysql
 
+# import import_ipynb
+# from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW, Recommend_Movies_with_TFIDF
+
 app = Flask(__name__)
 
 # Database configuration (update with your credentials)
@@ -72,6 +75,7 @@ def get_movies():
     
     return jsonify(movies)
 
+<<<<<<< HEAD
 @app.route('/search')
 def search_movies():
     search_query = request.args.get('q', '')
@@ -127,6 +131,9 @@ def movie_details(movie_id):
         return render_template('404.html'), 404
     
     return render_template('movie_detail.html', movie=movie)
+=======
+
+>>>>>>> 7ffa75b245726dc6eb18853b43dc2d26594c9014
 
 if __name__ == '__main__':
     app.run(debug=True)
