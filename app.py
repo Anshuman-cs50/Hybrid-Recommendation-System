@@ -103,10 +103,7 @@ def get_movies():
     
     return jsonify(movies)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e86d3a283e7772d335fb05249326b8bb498eec24
+
 @app.route('/search')
 def search_movies():
     search_query = request.args.get('q', '')
@@ -162,11 +159,8 @@ def movie_details(movie_id):
         return render_template('404.html'), 404
     
     return render_template('movie_detail.html', movie=movie)
-<<<<<<< HEAD
-=======
 
->>>>>>> 7ffa75b245726dc6eb18853b43dc2d26594c9014
-=======
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -220,7 +214,6 @@ def register():
         else:
             return render_template('register.html', error="All fields are required.")
     return render_template('register.html')
->>>>>>> e86d3a283e7772d335fb05249326b8bb498eec24
 
 if __name__ == '__main__':
     app.run(debug=True)
