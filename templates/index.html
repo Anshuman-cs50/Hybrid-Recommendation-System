@@ -11,14 +11,17 @@
     <header class="header">
         <h1>Movie Universe</h1>
         <p>Explore thousands of movies across various categories</p>
+        <div class="search-container">
+            <form action="/search" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="Search movies..." class="search-input">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
     </header>
 
     <main>
-        <section class="category-section" id="Recommended">
-            <h2 class="category-title">Recommended for you</h2>
-            <div class="movies-container" id="Recommended-movies"></div>
-        </section>
-
         <section class="category-section" id="latest">
             <h2 class="category-title">Latest Releases</h2>
             <div class="movies-container" id="latest-movies"></div>

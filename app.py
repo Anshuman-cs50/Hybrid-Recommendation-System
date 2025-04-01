@@ -1,16 +1,12 @@
 from flask import Flask, render_template, jsonify, request
 import pymysql
-from pymysql import Error
-
-# import import_ipynb
-# from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW, Recommend_Movies_with_TFIDF
 
 app = Flask(__name__)
 
 # Database configuration (update with your credentials)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Anshuman@0812'
+app.config['MYSQL_PASSWORD'] = 'raGed2025@off'
 app.config['MYSQL_DB'] = 'movies_db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
@@ -48,7 +44,6 @@ def get_movies():
                 ORDER BY release_date DESC 
                 LIMIT 10
             """)
-            
             movies['latest'] = cursor.fetchall()
 
             # Query for popular movies
@@ -60,8 +55,6 @@ def get_movies():
             """)
             movies['popular'] = cursor.fetchall()
 
-            movies['Recommended'] = movies['popular']
-
             # Query for action movies
             cursor.execute("""
                 SELECT m.* 
@@ -72,44 +65,68 @@ def get_movies():
                 LIMIT 10
             """)
             movies['action'] = cursor.fetchall()
-        
+            
         connection.close()
     except Exception as e:
         print(f"Database error: {e}")
     
     return jsonify(movies)
 
-@app.route('/api/save_movie', methods=['POST'])
-def save_movie_route():
-    # This is where you'll implement the logic to save a movie
-    user_id = request.form.get('user_id')
-    movie_id = request.form.get('movie_id')
-
-    if not user_id or not movie_id:
-        return jsonify({"error": "User ID and Movie ID are required"}), 400
+@app.route('/search')
+def search_movies():
+    search_query = request.args.get('q', '')
+    connection = get_db_connection()
     
+    movies = []
     try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        # Check if movie is already saved
-        cursor.execute("""
-            SELECT * FROM user_saved_movies WHERE user_id = %s AND movie_id = %s
-        """, (user_id, movie_id))
-        
-        if cursor.fetchone():
-            return jsonify({"message": "Movie already saved"}), 200
-
-        # Insert into database
-        cursor.execute("""
-            INSERT INTO user_saved_movies (user_id, movie_id) VALUES (%s, %s)
-        """, (user_id, movie_id))
-        connection.commit()
-
-        return jsonify({"message": "Movie saved successfully"}), 201
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM movies 
+                WHERE title LIKE %s
+                ORDER BY release_date DESC
+                LIMIT 20
+            """, ('%' + search_query + '%',))
+            movies = cursor.fetchall()
+        connection.close()
+    except Exception as e:
+        print(f"Search error: {e}")
     
-    except Error as e:
-        return jsonify({"error": str(e)}), 500
+    return render_template('search_results.html', 
+                         movies=movies, 
+                         query=search_query)
+
+@app.route('/movie/<int:movie_id>')
+def movie_details(movie_id):
+    connection = get_db_connection()
+    movie = None
+    try:
+        with connection.cursor() as cursor:
+            # Get movie details
+            cursor.execute("""
+                SELECT * FROM movies 
+                WHERE movie_id = %s
+            """, (movie_id,))
+            movie = cursor.fetchone()
+            
+            # Get genres
+            if movie:
+                cursor.execute("""
+                    SELECT g.name 
+                    FROM genres g
+                    JOIN movie_genres mg ON g.id = mg.genre_id
+                    WHERE mg.movie_id = %s
+                """, (movie_id,))
+                genres = cursor.fetchall()
+                movie['genres'] = [g['name'] for g in genres]
+            
+        connection.close()
+    except Exception as e:
+        print(f"Movie details error: {e}")
+    
+    if not movie:
+        return render_template('404.html'), 404
+    
+    return render_template('movie_detail.html', movie=movie)
 
 if __name__ == '__main__':
     app.run(debug=True)
