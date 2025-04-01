@@ -72,12 +72,24 @@ def get_movies():
     
     return jsonify(movies)
 
+<<<<<<< HEAD
 @app.route('/search')
 def search_movies():
     search_query = request.args.get('q', '')
     connection = get_db_connection()
     
     movies = []
+=======
+@app.route('/api/save_movie', methods=['POST'])
+def save_movie_route():
+    # This is where you'll implement the logic to save a movie
+    user_id = request.form.get('user_id')
+    movie_id = request.form.get('movie_id')
+
+    if not user_id or not movie_id:
+        return jsonify({"error": "User ID and Movie ID are required"}), 400
+
+>>>>>>> f5eb5c95332920c3bb2416a826df466a9c066d6e
     try:
         with connection.cursor() as cursor:
             cursor.execute("""
