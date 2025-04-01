@@ -1,10 +1,10 @@
 from flask import Flask, render_template, jsonify, request
 import pymysql
 
-# import import_ipynb
-# from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW, Recommend_Movies_with_TFIDF
-
 app = Flask(__name__)
+
+# import import_ipynb
+# from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW
 
 # Database configuration (update with your credentials)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -23,17 +23,43 @@ def get_db_connection():
     )
 
 @app.route('/')
-def index():
+def index(): 
     return render_template('index.html')
+
+def Recommend_movie_to_user(user_id):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Fetch user preferences or history from the database
+            cursor.execute("""
+                            select title from movies where movie_id in
+                            (select movie_id from user_saved_movies where user_id = %s);
+                        """, (user_id,))
+            user_preferences = [movie[0] for movie in cursor.fetchall()]
+            
+            if user_preferences:
+                # Call your recommendation function here
+                recommended_movies = tuple()
+                for movie in user_preferences:
+                    recommended_movies += Recommend_Movies_with_BOW(movie)
+                return recommended_movies
+            else:
+                return []
+    finally:
+        connection.close()
 
 @app.route('/api/movies')
 def get_movies():
+    if session.get('user_id') is None:
+        return render_template('login.html')
+
     # This is where you'll implement your database queries
     # Sample structure - replace with actual database queries
     movies = {
         "latest": [],
         "popular": [],
-        "action": []
+        "action": [],
+        "Recommended": [],
     }
     
     try:
@@ -44,10 +70,12 @@ def get_movies():
             cursor.execute("""
                 SELECT m.* 
                 FROM movies m
-                ORDER BY release_date DESC 
+                ORDER BY release_date DESC
                 LIMIT 10
             """)
             movies['latest'] = cursor.fetchall()
+
+            # movies['Recommended'] = Recommend_Movies_to_user(session['user_id'])
 
             # Query for popular movies
             cursor.execute("""
@@ -76,6 +104,9 @@ def get_movies():
     return jsonify(movies)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e86d3a283e7772d335fb05249326b8bb498eec24
 @app.route('/search')
 def search_movies():
     search_query = request.args.get('q', '')
@@ -131,9 +162,65 @@ def movie_details(movie_id):
         return render_template('404.html'), 404
     
     return render_template('movie_detail.html', movie=movie)
+<<<<<<< HEAD
 =======
 
 >>>>>>> 7ffa75b245726dc6eb18853b43dc2d26594c9014
+=======
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        if username and password:
+            connection = get_db_connection()
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        INSERT INTO users (username, password) 
+                        VALUES (%s, %s)
+                    """, (username, password))
+                    connection.commit()
+                    session['user_id'] = cursor.lastrowid
+                connection.close()
+                return render_template('index.html')
+            except Exception as e:
+                print(f"Login error: {e}")
+                connection.rollback()
+                connection.close()
+        else:
+            return render_template('login.html', error="All fields are required.")
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        if username and email and password:
+            connection = get_db_connection()
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        INSERT INTO users (username, email, password) 
+                        VALUES (%s, %s, %s)
+                    """, (username, email, password))
+                    connection.commit()
+                    session['user_id'] = cursor.lastrowid
+                connection.close()
+                return render_template('login.html')
+            except Exception as e:
+                print(f"Registration error: {e}")
+                connection.rollback()
+                connection.close()
+        else:
+            return render_template('register.html', error="All fields are required.")
+    return render_template('register.html')
+>>>>>>> e86d3a283e7772d335fb05249326b8bb498eec24
 
 if __name__ == '__main__':
     app.run(debug=True)
