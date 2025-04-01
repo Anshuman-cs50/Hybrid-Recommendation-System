@@ -159,5 +159,58 @@ def movie_details(movie_id):
     
     return render_template('movie_detail.html', movie=movie)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        if username and password:
+            connection = get_db_connection()
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        INSERT INTO users (username, password) 
+                        VALUES (%s, %s)
+                    """, (username, password))
+                    connection.commit()
+                    session['user_id'] = cursor.lastrowid
+                connection.close()
+                return render_template('index.html')
+            except Exception as e:
+                print(f"Login error: {e}")
+                connection.rollback()
+                connection.close()
+        else:
+            return render_template('login.html', error="All fields are required.")
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        if username and email and password:
+            connection = get_db_connection()
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("""
+                        INSERT INTO users (username, email, password) 
+                        VALUES (%s, %s, %s)
+                    """, (username, email, password))
+                    connection.commit()
+                    session['user_id'] = cursor.lastrowid
+                connection.close()
+                return render_template('login.html')
+            except Exception as e:
+                print(f"Registration error: {e}")
+                connection.rollback()
+                connection.close()
+        else:
+            return render_template('register.html', error="All fields are required.")
+    return render_template('register.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
