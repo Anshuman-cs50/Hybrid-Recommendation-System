@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 import requests
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key_here"
+app.secret_key = "b'\x9f\x1a\x8c\x7e\x3d\x2b\x4f\x5e\x6a\x7c\x8d\x9e\xaf\xbc\xcd\xde'"
 
 bcrypt = Bcrypt(app)
 

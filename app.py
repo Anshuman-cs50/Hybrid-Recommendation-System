@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Database configuration (update with your credentials)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'raGed2025@off'
+app.config['MYSQL_PASSWORD'] = 'Anshuman@0812'
 app.config['MYSQL_DB'] = 'movies_db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
