@@ -1,7 +1,10 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session
 import pymysql
 
 app = Flask(__name__)
+
+# import import_ipynb
+# from movie_recommendation_system_with_basic_concept import Recommend_Movies_with_BOW
 
 # Database configuration (update with your credentials)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -20,17 +23,43 @@ def get_db_connection():
     )
 
 @app.route('/')
-def index():
+def index(): 
     return render_template('index.html')
+
+def Recommend_movie_to_user(user_id):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Fetch user preferences or history from the database
+            cursor.execute("""
+                            select title from movies where movie_id in
+                            (select movie_id from user_saved_movies where user_id = %s);
+                        """, (user_id,))
+            user_preferences = [movie[0] for movie in cursor.fetchall()]
+            
+            if user_preferences:
+                # Call your recommendation function here
+                recommended_movies = tuple()
+                for movie in user_preferences:
+                    recommended_movies += Recommend_Movies_with_BOW(movie)
+                return recommended_movies
+            else:
+                return []
+    finally:
+        connection.close()
 
 @app.route('/api/movies')
 def get_movies():
+    if session.get('user_id') is None:
+        return render_template('login.html')
+
     # This is where you'll implement your database queries
     # Sample structure - replace with actual database queries
     movies = {
         "latest": [],
         "popular": [],
-        "action": []
+        "action": [],
+        "Recommended": [],
     }
     
     try:
@@ -41,10 +70,12 @@ def get_movies():
             cursor.execute("""
                 SELECT m.* 
                 FROM movies m
-                ORDER BY release_date DESC 
+                ORDER BY release_date DESC
                 LIMIT 10
             """)
             movies['latest'] = cursor.fetchall()
+
+            # movies['Recommended'] = Recommend_Movies_to_user(session['user_id'])
 
             # Query for popular movies
             cursor.execute("""
